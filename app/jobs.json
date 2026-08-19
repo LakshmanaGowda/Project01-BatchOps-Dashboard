@@ -1,0 +1,14 @@
+[
+    {
+        "job": "Invoice Processing",
+        "status": "Running"
+    },
+    {
+        "job": "Payroll Batch",
+        "status": "Success"
+    },
+    {
+        "job": "Customer ETL",
+        "status": "Failed"
+    }
+]

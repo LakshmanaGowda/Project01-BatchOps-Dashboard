@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>BatchOps Dashboard</title>
+</head>
+
+<body>
+
+    <h1>BatchOps Dashboard</h1>
+
+    <h2>Jobs</h2>
+
+    <ul>
+
+        {% for job in jobs %}
+
+        <li>{{ job.job }} - {{ job.status }}</li>
+
+        {% endfor %}
+
+    </ul>
+
+    <h2>Server Health</h2>
+
+    <p>{{ health }}</p>
+
+</body>
+
+</html>
