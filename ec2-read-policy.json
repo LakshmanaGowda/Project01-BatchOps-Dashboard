@@ -13,7 +13,11 @@
         "ec2:DescribeImages",
         "ec2:DescribeKeyPairs",
         "ec2:DescribeInstanceTypes",
-        "ec2:DescribeInstanceAttribute"
+        "ec2:DescribeInstanceAttribute",
+        "ec2:DescribeVolumes",
+        "ec2:DescribeVolumeAttribute",
+        "ec2:DescribeVolumeStatus",
+        "ec2:DescribeSnapshots"
       ],
       "Resource": "*"
     }
