@@ -2,6 +2,10 @@ pipeline {
 
     agent any
 
+    environment {
+        DOCKER_IMAGE = 'lakshmanagowda/batchops-dashboard'
+    }
+
     stages {
 
         stage('Terraform Init') {
@@ -30,7 +34,26 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t batchops app/'
+                sh 'docker build -t $DOCKER_IMAGE:latest -t $DOCKER_IMAGE:build-$BUILD_NUMBER app/'
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-creds',
+                        usernameVariable: 'DOCKER_USERNAME',
+                        passwordVariable: 'DOCKER_PASSWORD'
+                    )
+                ]) {
+                    sh '''
+                        echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+                        docker push $DOCKER_IMAGE:latest
+                        docker push $DOCKER_IMAGE:build-$BUILD_NUMBER
+                        docker logout
+                    '''
+                }
             }
         }
 
