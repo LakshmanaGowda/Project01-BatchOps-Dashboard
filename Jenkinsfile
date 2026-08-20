@@ -4,10 +4,27 @@ pipeline {
 
     stages {
 
-        stage('Clone Repository') {
+        stage('Terraform Init') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/LakshmanaGowda/Project01-BatchOps-Dashboard.git'
+                dir('terraform') {
+                    sh 'terraform init -input=false'
+                }
+            }
+        }
+
+        stage('Terraform Validate') {
+            steps {
+                dir('terraform') {
+                    sh 'terraform validate'
+                }
+            }
+        }
+
+        stage('Terraform Plan') {
+            steps {
+                dir('terraform') {
+                    sh 'terraform plan -input=false'
+                }
             }
         }
 
