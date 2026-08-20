@@ -12,7 +12,8 @@
         "ec2:DescribeVpcs",
         "ec2:DescribeImages",
         "ec2:DescribeKeyPairs",
-        "ec2:DescribeInstanceTypes"
+        "ec2:DescribeInstanceTypes",
+        "ec2:DescribeInstanceAttribute"
       ],
       "Resource": "*"
     }
