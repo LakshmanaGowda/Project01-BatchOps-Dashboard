@@ -138,6 +138,7 @@ Docker Hub
 
 
 Application image available online
+CI/CD webhook test
 Phase 6 — CI/CD Pipeline (1 hour)
 Goal
 
