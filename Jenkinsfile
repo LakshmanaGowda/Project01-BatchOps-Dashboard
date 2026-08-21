@@ -34,7 +34,11 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $DOCKER_IMAGE:latest -t $DOCKER_IMAGE:build-$BUILD_NUMBER app/'
+                sh '''
+                    docker build \
+                      -t ${DOCKER_IMAGE}:build-${BUILD_NUMBER} \
+                      app/
+                '''
             }
         }
 
@@ -48,24 +52,29 @@ pipeline {
                     )
                 ]) {
                     sh '''
-                        echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-                        docker push $DOCKER_IMAGE:latest
-                        docker push $DOCKER_IMAGE:build-$BUILD_NUMBER
+                        echo "$DOCKER_PASSWORD" | docker login \
+                          -u "$DOCKER_USERNAME" \
+                          --password-stdin
+
+                        docker push ${DOCKER_IMAGE}:build-${BUILD_NUMBER}
+
                         docker logout
                     '''
                 }
             }
         }
 
-        stage('Remove Existing Container') {
+        stage('Deploy to Kubernetes') {
             steps {
-                sh 'docker rm -f batchops-container || true'
-            }
-        }
+                sh '''
+                    export KUBECONFIG=/var/lib/jenkins/.kube/config
 
-        stage('Deploy Container') {
-            steps {
-                sh 'docker run -d -p 5001:5000 --name batchops-container batchops'
+                    kubectl set image deployment/batchops-dashboard \
+                      batchops-dashboard=${DOCKER_IMAGE}:build-${BUILD_NUMBER}
+
+                    kubectl rollout status deployment/batchops-dashboard \
+                      --timeout=120s
+                '''
             }
         }
     }

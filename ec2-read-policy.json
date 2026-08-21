@@ -3,22 +3,7 @@
   "Statement": [
     {
       "Effect": "Allow",
-      "Action": [
-        "ec2:DescribeInstances",
-        "ec2:DescribeInstanceStatus",
-        "ec2:DescribeTags",
-        "ec2:DescribeSecurityGroups",
-        "ec2:DescribeSubnets",
-        "ec2:DescribeVpcs",
-        "ec2:DescribeImages",
-        "ec2:DescribeKeyPairs",
-        "ec2:DescribeInstanceTypes",
-        "ec2:DescribeInstanceAttribute",
-        "ec2:DescribeVolumes",
-        "ec2:DescribeVolumeAttribute",
-        "ec2:DescribeVolumeStatus",
-        "ec2:DescribeSnapshots"
-      ],
+      "Action": "ec2:Describe*",
       "Resource": "*"
     }
   ]
