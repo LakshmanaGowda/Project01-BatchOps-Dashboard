@@ -4,6 +4,8 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = 'lakshmanagowda/batchops-dashboard'
+        DOCKER_CREDENTIALS = 'dockerhub-credentials'
+        KUBECONFIG = '/var/lib/jenkins/.kube/config'
     }
 
     stages {
@@ -46,14 +48,14 @@ pipeline {
             steps {
                 withCredentials([
                     usernamePassword(
-                        credentialsId: 'dockerhub-creds',
+                        credentialsId: "${DOCKER_CREDENTIALS}",
                         usernameVariable: 'DOCKER_USERNAME',
                         passwordVariable: 'DOCKER_PASSWORD'
                     )
                 ]) {
                     sh '''
-                        echo "$DOCKER_PASSWORD" | docker login \
-                          -u "$DOCKER_USERNAME" \
+                        echo "${DOCKER_PASSWORD}" | docker login \
+                          -u "${DOCKER_USERNAME}" \
                           --password-stdin
 
                         docker push ${DOCKER_IMAGE}:build-${BUILD_NUMBER}
@@ -67,13 +69,38 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 sh '''
-                    export KUBECONFIG=/var/lib/jenkins/.kube/config
+                    echo "Deploying Docker image:"
+                    echo "${DOCKER_IMAGE}:build-${BUILD_NUMBER}"
 
-                    kubectl set image deployment/batchops-dashboard \
-                      batchops-dashboard=${DOCKER_IMAGE}:build-${BUILD_NUMBER}
+                    echo "Updating Kubernetes deployment manifest..."
 
-                    kubectl rollout status deployment/batchops-dashboard \
-                      --timeout=120s
+                    sed -i "s|image: .*|image: ${DOCKER_IMAGE}:build-${BUILD_NUMBER}|" \
+                        k8s/deployment.yaml
+
+                    echo "Applying Kubernetes deployment..."
+
+                    kubectl apply -f k8s/deployment.yaml
+
+                    echo "Applying Kubernetes service..."
+
+                    kubectl apply -f k8s/service.yaml
+
+                    echo "Waiting for deployment rollout..."
+
+                    kubectl rollout status \
+                        deployment/batchops-dashboard \
+                        --timeout=120s
+
+                    echo "Deployment successful."
+
+                    echo "Deployment status:"
+                    kubectl get deployment batchops-dashboard
+
+                    echo "Pod status:"
+                    kubectl get pods -l app=batchops-dashboard -o wide
+
+                    echo "Service status:"
+                    kubectl get service batchops-dashboard-service
                 '''
             }
         }
