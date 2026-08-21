@@ -4,7 +4,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = 'lakshmanagowda/batchops-dashboard'
-        DOCKER_CREDENTIALS = 'dockerhub-credentials'
+        DOCKER_CREDENTIALS = 'dockerhub-creds'
         KUBECONFIG = '/var/lib/jenkins/.kube/config'
     }
 
