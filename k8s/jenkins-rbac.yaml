@@ -10,6 +10,7 @@ kind: Role
 metadata:
   name: jenkins-deployer-role
   namespace: default
+
 rules:
   - apiGroups: ["apps"]
     resources: ["deployments"]
@@ -19,16 +20,22 @@ rules:
     resources: ["pods"]
     verbs: ["get", "list", "watch"]
 
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: jenkins-deployer-binding
   namespace: default
+
 subjects:
   - kind: ServiceAccount
     name: jenkins-deployer
     namespace: default
+
 roleRef:
   kind: Role
   name: jenkins-deployer-role
