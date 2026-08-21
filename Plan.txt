@@ -1,6 +1,5 @@
 Phase 1 — Project Foundation (1 hour)
-Goal-test
-
+Goal-
 Create the application.
 
 Features
